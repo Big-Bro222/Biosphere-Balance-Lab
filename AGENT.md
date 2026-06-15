@@ -135,6 +135,7 @@ Expected responsibilities:
 
 * Keep simulation systems modular and testable.
 * Prefer ECS where it demonstrates clear value.
+* Use explicit C# type names instead of `var` in project code and examples.
 * Avoid mixing UI-specific concerns into simulation logic.
 * Keep WebGPU/browser integration concerns separate from core simulation logic.
 * Add Unity tests for simulation rules and data transformations where practical.
