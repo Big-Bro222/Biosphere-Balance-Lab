@@ -6,7 +6,7 @@ namespace BioSphereLab.DependencyInjection.Infrastructure
 {
     [CreateAssetMenu(
         fileName = "StorageInjection",
-        menuName = "Biosphere Balance Lab/Dependency Injection/Storage Injection")]
+        menuName = "BioSphereLab/Dependency Injection/Storage Injection")]
     public sealed class StorageInjection : ScriptableObject, IPrefabStorage
     {
         [SerializeField] private List<PrefabEntry> prefabs = new();

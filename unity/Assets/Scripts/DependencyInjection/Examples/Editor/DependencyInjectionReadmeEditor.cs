@@ -22,12 +22,6 @@ namespace BioSphereLab.DependencyInjection.Examples.Editor
         private GUIStyle bodyStyle;
         private GUIStyle codeStyle;
 
-        [MenuItem("Biosphere Balance Lab/Dependency Injection/Open Readme")]
-        private static void OpenReadme()
-        {
-            SelectAsset(ReadmeAssetPath, false);
-        }
-
         public override void OnInspectorGUI()
         {
             EnsureStyles();

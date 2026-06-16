@@ -1,4 +1,4 @@
-# Biosphere Balance Lab Architecture
+# BioSphereLab Architecture
 
 ## Unity dependency injection
 

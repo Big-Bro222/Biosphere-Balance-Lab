@@ -1,8 +1,8 @@
-# Biosphere Balance Lab — Project Milestones
+# BioSphereLab Project Milestones
 
 ## Project Overview
 
-**Biosphere Balance Lab** is an interactive WebGPU ecosystem simulation dashboard built with Unity ECS, React, and .NET.
+**BioSphereLab** is an interactive WebGPU ecosystem simulation dashboard built with Unity ECS, React, and .NET.
 
 The project demonstrates a closed biosphere simulation where users can configure environmental variables, run the simulation in the browser, inspect real-time ecosystem metrics, and analyze whether the system reaches balance or collapses over time.
 
@@ -383,8 +383,8 @@ By the end of the project, the portfolio package should include:
 
 ## Suggested Portfolio Title
 
-**Biosphere Balance Lab — An Interactive WebGPU Ecosystem Simulation Dashboard**
+**BioSphereLab - An Interactive WebGPU Ecosystem Simulation Dashboard**
 
 ## Suggested One-Sentence Summary
 
-**Biosphere Balance Lab is a browser-based closed ecosystem simulation tool built with Unity ECS, WebGPU, React, and .NET, designed to demonstrate scalable simulation architecture, real-time data visualization, automated testing, and CI/CD engineering practices.**
+**BioSphereLab is a browser-based closed ecosystem simulation tool built with Unity ECS, WebGPU, React, and .NET, designed to demonstrate scalable simulation architecture, real-time data visualization, automated testing, and CI/CD engineering practices.**

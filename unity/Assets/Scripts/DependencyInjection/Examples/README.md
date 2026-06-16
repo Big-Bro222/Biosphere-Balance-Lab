@@ -2,11 +2,6 @@
 
 Runtime dependency registration for scene objects and ECS systems.
 
-Unity Editor entry point:
-
-- Select `DependencyInjectionReadme.asset` in this folder for an Inspector-friendly guide.
-- Use `Biosphere Balance Lab > Dependency Injection > Open Readme` from the Unity menu.
-
 ## Namespaces
 
 - Runtime infrastructure: `BioSphereLab.DependencyInjection.Infrastructure`
@@ -14,7 +9,7 @@ Unity Editor entry point:
 
 ## Setup
 
-1. Create a `StorageInjection` asset from `Create > Biosphere Balance Lab > Dependency Injection > Storage Injection`.
+1. Create a `StorageInjection` asset from `Create > BioSphereLab > Dependency Injection > Storage Injection`.
 2. Add prefab entries such as `plant` or `animal` to the asset.
 3. Add an empty GameObject named `Dependency Scope`.
 4. Add `InjectionScope` to it and assign the `StorageInjection` asset.
