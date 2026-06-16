@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 
 namespace BioSphereLab.DependencyInjection.Infrastructure
 {
@@ -42,6 +43,31 @@ namespace BioSphereLab.DependencyInjection.Infrastructure
             bindings[bindingId] = container => factory(container);
 
             EnsureActiveKey<TService>(bindingId.Key);
+        }
+
+        public TSystem RegisterSystem<TService, TSystem, TSystemGroup>(World world, string key = null)
+            where TService : class
+            where TSystem : SystemBase, TService
+            where TSystemGroup : ComponentSystemGroup
+        {
+            if (world == null)
+            {
+                throw new ArgumentNullException(nameof(world));
+            }
+
+            TSystem system = world.GetOrCreateSystemManaged<TSystem>();
+            Register<TService>(system, key);
+
+            if (system is InjectedSystemBase injectedSystem)
+            {
+                injectedSystem.SetContainer(this);
+            }
+
+            TSystemGroup systemGroup = world.GetOrCreateSystemManaged<TSystemGroup>();
+            systemGroup.AddSystemToUpdateList(system);
+            systemGroup.SortSystems();
+
+            return system;
         }
 
         public bool Has<TService>(string key = null) where TService : class

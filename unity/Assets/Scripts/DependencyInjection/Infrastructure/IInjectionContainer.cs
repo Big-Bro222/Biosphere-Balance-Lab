@@ -1,4 +1,5 @@
 using System;
+using Unity.Entities;
 
 namespace BioSphereLab.DependencyInjection.Infrastructure
 {
@@ -12,6 +13,11 @@ namespace BioSphereLab.DependencyInjection.Infrastructure
 
         void RegisterFactory<TService>(Func<IInjectionContainer, TService> factory, string key = null)
             where TService : class;
+
+        TSystem RegisterSystem<TService, TSystem, TSystemGroup>(World world, string key = null)
+            where TService : class
+            where TSystem : SystemBase, TService
+            where TSystemGroup : ComponentSystemGroup;
 
         bool Has<TService>(string key = null) where TService : class;
 

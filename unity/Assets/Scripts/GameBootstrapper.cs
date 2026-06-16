@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using BioSphereLab.DependencyInjection.Examples;
 using BioSphereLab.DependencyInjection.Infrastructure;
+using BioSphereLab.Systems;
 using Unity.Entities;
 using UnityEngine;
 
@@ -7,26 +9,21 @@ namespace BioSphereLab
 {
     public static class GameBootstrapper
     {
-        private static bool dependenciesRegistered;
-        private static bool exampleSystemRegistered;
+        private static readonly Dictionary<World, InjectionContainer> ContainersByWorld = new();
 
         // Unity can keep static fields alive between Play Mode sessions when Domain Reload is disabled.
-        // Reset these bootstrap guards before scene loading so each new ECS World receives a fresh DI
-        // container registration and a fresh ExampleSystem registration.
+        // Reset bootstrap state before scene loading so each Play Mode session starts cleanly.
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetBootstrapState()
         {
-            dependenciesRegistered = false;
-            exampleSystemRegistered = false;
+            ContainersByWorld.Clear();
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Bootstrap()
         {
             World world = GetOrCreateDefaultWorld();
-
-            RegisterDependencies(world);
-            RegisterExampleSystem(world);
+            RegisterWorld(world);
         }
 
         private static World GetOrCreateDefaultWorld()
@@ -37,41 +34,32 @@ namespace BioSphereLab
             {
                 world = DefaultWorldInitialization.Initialize("Default World");
             }
-
             return world;
         }
 
-        private static void RegisterDependencies(World world)
+        private static void RegisterWorld(World world)
         {
-            if (dependenciesRegistered)
+            if (ContainersByWorld.ContainsKey(world))
             {
                 return;
             }
 
             InjectionContainer container = new InjectionContainer();
-            container.Register<IInjectionContainer>(container);
-            container.Register<IBiosphereSpawnPolicy>(new BalancedBiosphereSpawnPolicy(), "balanced");
-            container.Register<IBiosphereSpawnPolicy>(new StressTestBiosphereSpawnPolicy(), "stress");
-            container.Switch<IBiosphereSpawnPolicy>("balanced");
+            RegisterDependencies(container);
+            RegisterSystems(world, container);
 
-            EcsInjectionRegistry.Register(world, container);
-
-            dependenciesRegistered = true;
+            ContainersByWorld[world] = container;
         }
 
-        private static void RegisterExampleSystem(World world)
+        private static void RegisterDependencies(InjectionContainer container)
         {
-            if (exampleSystemRegistered)
-            {
-                return;
-            }
-
-            ExampleSystem exampleSystem = world.GetOrCreateSystemManaged<ExampleSystem>();
-            InitializationSystemGroup initializationSystemGroup = world.GetOrCreateSystemManaged<InitializationSystemGroup>();
-            initializationSystemGroup.AddSystemToUpdateList(exampleSystem);
-            initializationSystemGroup.SortSystems();
-
-            exampleSystemRegistered = true;
+            container.Register<ICreatureSpawnConfig, ConstCreatureSpawnConfig>();
+            container.Register<IBiosphereSpawnPolicy, BalancedBiosphereSpawnPolicy>();
+        }
+        
+        private static void RegisterSystems(World world, InjectionContainer container)
+        {
+            container.RegisterSystem<ICreatureInitSystem, CreatureInitSystem, InitializationSystemGroup>(world);
         }
     }
 }

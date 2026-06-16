@@ -9,17 +9,11 @@ namespace BioSphereLab.DependencyInjection.Infrastructure
 
         protected bool HasContainer
         {
-            get
-            {
-                RefreshContainer();
-                return container != null;
-            }
+            get { return container != null; }
         }
 
         protected bool TryResolve<TService>(out TService service, string key = null) where TService : class
         {
-            RefreshContainer();
-
             if (container != null)
             {
                 return container.TryResolve(out service, key);
@@ -40,12 +34,9 @@ namespace BioSphereLab.DependencyInjection.Infrastructure
                 $"No dependency container or service binding is available for {typeof(TService).Name}.");
         }
 
-        private void RefreshContainer()
+        internal void SetContainer(IInjectionContainer injectionContainer)
         {
-            if (container == null)
-            {
-                EcsInjectionRegistry.TryGetContainer(World, out container);
-            }
+            container = injectionContainer;
         }
     }
 }
