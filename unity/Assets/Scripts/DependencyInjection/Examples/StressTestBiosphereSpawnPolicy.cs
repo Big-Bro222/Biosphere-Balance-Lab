@@ -1,4 +1,4 @@
-namespace BiosphereBalanceLab.Examples.DependencyInjection
+namespace BioSphereLab.DependencyInjection.Examples
 {
     public sealed class StressTestBiosphereSpawnPolicy : IBiosphereSpawnPolicy
     {

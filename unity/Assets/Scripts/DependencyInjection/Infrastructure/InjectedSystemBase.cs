@@ -1,7 +1,7 @@
 using System;
 using Unity.Entities;
 
-namespace BiosphereBalanceLab.Infrastructure.DependencyInjection
+namespace BioSphereLab.DependencyInjection.Infrastructure
 {
     public abstract partial class InjectedSystemBase : SystemBase
     {

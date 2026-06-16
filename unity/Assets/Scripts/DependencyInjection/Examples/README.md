@@ -1,8 +1,18 @@
-# Dependency Injection Example
+# Dependency Injection
 
-This folder shows how to use the small runtime DI system in `Assets/Scripts/DependencyInjection/Infrastructure/DependencyInjection`.
+Runtime dependency registration for scene objects and ECS systems.
 
-## Scene setup
+Unity Editor entry point:
+
+- Select `DependencyInjectionReadme.asset` in this folder for an Inspector-friendly guide.
+- Use `Biosphere Balance Lab > Dependency Injection > Open Readme` from the Unity menu.
+
+## Namespaces
+
+- Runtime infrastructure: `BioSphereLab.DependencyInjection.Infrastructure`
+- Examples: `BioSphereLab.DependencyInjection.Examples`
+
+## Setup
 
 1. Create a `StorageInjection` asset from `Create > Biosphere Balance Lab > Dependency Injection > Storage Injection`.
 2. Add prefab entries such as `plant` or `animal` to the asset.
@@ -11,7 +21,17 @@ This folder shows how to use the small runtime DI system in `Assets/Scripts/Depe
 5. Add `ExampleBiosphereDependencyInstaller` to the same GameObject.
 6. Add `DependencyInjectionUsageExample` to any scene GameObject.
 
-## Switch dependency
+## Runtime Flow
+
+```text
+InjectionScope
+  -> IInjectionInstaller
+  -> InjectionContainer
+  -> EcsInjectionRegistry
+  -> ExampleSystem
+```
+
+## Switch Dependencies
 
 `ExampleBiosphereDependencyInstaller` registers two implementations for the same interface:
 
@@ -28,7 +48,7 @@ container.Switch<IBiosphereSpawnPolicy>("stress");
 IBiosphereSpawnPolicy policy = container.Resolve<IBiosphereSpawnPolicy>();
 ```
 
-## ECS usage
+## ECS Usage
 
 `InjectionScope` automatically registers the container against `World.DefaultGameObjectInjectionWorld`.
 `ExampleSystem` inherits directly from `SystemBase`, is marked with `DisableAutoCreation`, and is manually registered by `GameBootstrapper`.

@@ -1,6 +1,6 @@
 using System;
 
-namespace BiosphereBalanceLab.Infrastructure.DependencyInjection
+namespace BioSphereLab.DependencyInjection.Infrastructure
 {
     public interface IInjectionContainer
     {

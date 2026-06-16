@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BiosphereBalanceLab.Infrastructure.DependencyInjection
+namespace BioSphereLab.DependencyInjection.Infrastructure
 {
     [CreateAssetMenu(
         fileName = "StorageInjection",

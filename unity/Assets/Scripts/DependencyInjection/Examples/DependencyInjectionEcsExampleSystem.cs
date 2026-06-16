@@ -1,8 +1,8 @@
-using BiosphereBalanceLab.Infrastructure.DependencyInjection;
+using BioSphereLab.DependencyInjection.Infrastructure;
 using Unity.Entities;
 using UnityEngine;
 
-namespace BiosphereBalanceLab.Examples.DependencyInjection
+namespace BioSphereLab.DependencyInjection.Examples
 {
     [UpdateInGroup(typeof(InitializationSystemGroup))]
     public partial class DependencyInjectionEcsExampleSystem : InjectedSystemBase

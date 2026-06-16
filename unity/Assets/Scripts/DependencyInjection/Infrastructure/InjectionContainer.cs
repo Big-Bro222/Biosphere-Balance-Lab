@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace BiosphereBalanceLab.Infrastructure.DependencyInjection
+namespace BioSphereLab.DependencyInjection.Infrastructure
 {
     public sealed class InjectionContainer : IInjectionContainer
     {

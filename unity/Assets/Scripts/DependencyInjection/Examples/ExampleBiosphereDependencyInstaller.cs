@@ -1,7 +1,7 @@
-using BiosphereBalanceLab.Infrastructure.DependencyInjection;
+using BioSphereLab.DependencyInjection.Infrastructure;
 using UnityEngine;
 
-namespace BiosphereBalanceLab.Examples.DependencyInjection
+namespace BioSphereLab.DependencyInjection.Examples
 {
     public sealed class ExampleBiosphereDependencyInstaller : MonoBehaviour, IInjectionInstaller
     {

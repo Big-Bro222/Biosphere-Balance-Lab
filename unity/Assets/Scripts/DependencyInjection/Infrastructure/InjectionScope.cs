@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-namespace BiosphereBalanceLab.Infrastructure.DependencyInjection
+namespace BioSphereLab.DependencyInjection.Infrastructure
 {
     public sealed class InjectionScope : MonoBehaviour
     {
