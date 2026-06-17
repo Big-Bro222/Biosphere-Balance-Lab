@@ -1,23 +1,28 @@
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace BioSphereLab.DependencyInjection.Infrastructure
 {
     public sealed class InjectionScope : MonoBehaviour
     {
-        [SerializeField] private StorageInjection storageInjection;
-        [SerializeField] private bool includeChildInstallers = true;
-        [SerializeField] private bool registerWithDefaultEcsWorld = true;
-        [SerializeField] private bool dontDestroyOnLoad;
+        [FormerlySerializedAs("storageInjection")]
+        [SerializeField] private StorageInjection m_storageInjection;
+        [FormerlySerializedAs("includeChildInstallers")]
+        [SerializeField] private bool m_includeChildInstallers = true;
+        [FormerlySerializedAs("registerWithDefaultEcsWorld")]
+        [SerializeField] private bool m_registerWithDefaultEcsWorld = true;
+        [FormerlySerializedAs("dontDestroyOnLoad")]
+        [SerializeField] private bool m_dontDestroyOnLoad;
 
-        private InjectionContainer container;
+        private InjectionContainer m_container;
 
         public IInjectionContainer Container
         {
             get
             {
                 EnsureBuilt();
-                return container;
+                return m_container;
             }
         }
 
@@ -25,7 +30,7 @@ namespace BioSphereLab.DependencyInjection.Infrastructure
         {
             EnsureBuilt();
 
-            if (dontDestroyOnLoad)
+            if (m_dontDestroyOnLoad)
             {
                 DontDestroyOnLoad(gameObject);
             }
@@ -33,20 +38,20 @@ namespace BioSphereLab.DependencyInjection.Infrastructure
 
         private void OnDestroy()
         {
-            if (registerWithDefaultEcsWorld && World.DefaultGameObjectInjectionWorld != null)
+            if (m_registerWithDefaultEcsWorld && World.DefaultGameObjectInjectionWorld != null)
             {
-                EcsInjectionRegistry.Unregister(World.DefaultGameObjectInjectionWorld, container);
+                EcsInjectionRegistry.Unregister(World.DefaultGameObjectInjectionWorld, m_container);
             }
         }
 
         private void EnsureBuilt()
         {
-            if (container != null)
+            if (m_container != null)
             {
                 return;
             }
 
-            container = new InjectionContainer();
+            m_container = new InjectionContainer();
             RegisterBuiltInServices();
             RunInstallers();
             RegisterEcsWorld();
@@ -54,18 +59,18 @@ namespace BioSphereLab.DependencyInjection.Infrastructure
 
         private void RegisterBuiltInServices()
         {
-            container.Register<IInjectionContainer>(container);
+            m_container.Register<IInjectionContainer>(m_container);
 
-            if (storageInjection != null)
+            if (m_storageInjection != null)
             {
-                container.Register(storageInjection);
-                container.Register<IPrefabStorage>(storageInjection);
+                m_container.Register(m_storageInjection);
+                m_container.Register<IAssetStorage>(m_storageInjection);
             }
         }
 
         private void RunInstallers()
         {
-            MonoBehaviour[] behaviours = includeChildInstallers
+            MonoBehaviour[] behaviours = m_includeChildInstallers
                 ? GetComponentsInChildren<MonoBehaviour>(true)
                 : GetComponents<MonoBehaviour>();
 
@@ -73,19 +78,19 @@ namespace BioSphereLab.DependencyInjection.Infrastructure
             {
                 if (behaviour is IInjectionInstaller installer)
                 {
-                    installer.Install(container);
+                    installer.Install(m_container);
                 }
             }
         }
 
         private void RegisterEcsWorld()
         {
-            if (!registerWithDefaultEcsWorld || World.DefaultGameObjectInjectionWorld == null)
+            if (!m_registerWithDefaultEcsWorld || World.DefaultGameObjectInjectionWorld == null)
             {
                 return;
             }
 
-            EcsInjectionRegistry.Register(World.DefaultGameObjectInjectionWorld, container);
+            EcsInjectionRegistry.Register(World.DefaultGameObjectInjectionWorld, m_container);
         }
     }
 }

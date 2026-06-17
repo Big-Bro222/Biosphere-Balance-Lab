@@ -1,17 +1,19 @@
 using BioSphereLab.DependencyInjection.Infrastructure;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace BioSphereLab.DependencyInjection.Examples
 {
     public sealed class ExampleBiosphereDependencyInstaller : MonoBehaviour, IInjectionInstaller
     {
-        [SerializeField] private string startupPolicyKey = "balanced";
+        [FormerlySerializedAs("startupPolicyKey")]
+        [SerializeField] private string m_startupPolicyKey = "balanced";
 
-        public void Install(IInjectionContainer container)
+        public void Install(IInjectionContainer p_container)
         {
-            container.Register<IBiosphereSpawnPolicy>(new BalancedBiosphereSpawnPolicy(), "balanced");
-            container.Register<IBiosphereSpawnPolicy>(new StressTestBiosphereSpawnPolicy(), "stress");
-            container.Switch<IBiosphereSpawnPolicy>(startupPolicyKey);
+            p_container.Register<IBiosphereSpawnPolicy>(new BalancedBiosphereSpawnPolicy(), "balanced");
+            p_container.Register<IBiosphereSpawnPolicy>(new StressTestBiosphereSpawnPolicy(), "stress");
+            p_container.Switch<IBiosphereSpawnPolicy>(m_startupPolicyKey);
         }
     }
 }

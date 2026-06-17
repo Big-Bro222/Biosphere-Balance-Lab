@@ -1,56 +1,56 @@
- using System.Collections.Generic;
+using System.Collections.Generic;
 using Unity.Entities;
 
 namespace BioSphereLab.DependencyInjection.Infrastructure
 {
     public static class EcsInjectionRegistry
     {
-        private static readonly Dictionary<World, IInjectionContainer> ContainersByWorld = new();
+        private static readonly Dictionary<World, IInjectionContainer> m_containersByWorld = new();
 
-        public static void Register(World world, IInjectionContainer container)
+        public static void Register(World p_world, IInjectionContainer p_container)
         {
-            if (world == null || container == null)
+            if (p_world == null || p_container == null)
             {
                 return;
             }
 
-            ContainersByWorld[world] = container;
+            m_containersByWorld[p_world] = p_container;
         }
 
-        public static void Unregister(World world, IInjectionContainer container)
+        public static void Unregister(World p_world, IInjectionContainer p_container)
         {
-            if (world == null)
+            if (p_world == null)
             {
                 return;
             }
 
-            if (ContainersByWorld.TryGetValue(world, out IInjectionContainer registeredContainer) &&
-                ReferenceEquals(registeredContainer, container))
+            if (m_containersByWorld.TryGetValue(p_world, out IInjectionContainer o_registeredContainer) &&
+                ReferenceEquals(o_registeredContainer, p_container))
             {
-                ContainersByWorld.Remove(world);
+                m_containersByWorld.Remove(p_world);
             }
         }
 
-        public static bool TryGetContainer(World world, out IInjectionContainer container)
+        public static bool TryGetContainer(World p_world, out IInjectionContainer o_container)
         {
-            if (world != null && ContainersByWorld.TryGetValue(world, out container))
+            if (p_world != null && m_containersByWorld.TryGetValue(p_world, out o_container))
             {
                 return true;
             }
 
-            container = null;
+            o_container = null;
             return false;
         }
 
-        public static bool TryResolve<TService>(World world, out TService service, string key = null)
+        public static bool TryResolve<TService>(World p_world, out TService o_service, string p_key = null)
             where TService : class
         {
-            if (TryGetContainer(world, out IInjectionContainer container))
+            if (TryGetContainer(p_world, out IInjectionContainer o_container))
             {
-                return container.TryResolve(out service, key);
+                return o_container.TryResolve(out o_service, p_key);
             }
 
-            service = null;
+            o_service = null;
             return false;
         }
     }

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5957bcbbbab48e24b98090d1243feb9f, type: 3}
+  m_Name: StorageInjection
+  m_EditorClassIdentifier: Assembly-CSharp::BioSphereLab.DependencyInjection.Infrastructure.StorageInjection
+  m_prefabs:
+  - m_key: TestPrefab
+    m_prefab: {fileID: 8738872792185393711, guid: 73f51d1b9cd3ce148a32cf155a94788c, type: 3}
+  m_materials: []
+  m_meshes:
+  - m_key: Cube
+    m_mesh: {fileID: -5495902117074765545, guid: f7ddf669c5060a546ae43e5aad4c20ef, type: 3}
+  - m_key: Cone
+    m_mesh: {fileID: 3613567641014311022, guid: f7ddf669c5060a546ae43e5aad4c20ef, type: 3}
+  - m_key: Cylinder
+    m_mesh: {fileID: 2534964839176971238, guid: f7ddf669c5060a546ae43e5aad4c20ef, type: 3}
+  - m_key: Iconsphere
+    m_mesh: {fileID: 289301614986012343, guid: f7ddf669c5060a546ae43e5aad4c20ef, type: 3}
+  - m_key: Plane
+    m_mesh: {fileID: -462981019419857548, guid: f7ddf669c5060a546ae43e5aad4c20ef, type: 3}
+  - m_key: Sphere
+    m_mesh: {fileID: 4711208715938537054, guid: f7ddf669c5060a546ae43e5aad4c20ef, type: 3}

@@ -11,10 +11,10 @@ namespace BioSphereLab
 
     public sealed class ConstCreatureSpawnConfig : ICreatureSpawnConfig
     {
-        public int PlantCount => Const.PLANT_COUNT;
+        public int PlantCount => Const.PlantCount;
 
-        public int HerbivoreCount => Const.HERBIVORE_COUNT;
+        public int HerbivoreCount => Const.HerbivoreCount;
 
-        public int PredatorCount => Const.PREDATOR_COUNT;
+        public int PredatorCount => Const.PredatorCount;
     }
 }

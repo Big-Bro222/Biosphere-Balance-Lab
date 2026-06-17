@@ -8,169 +8,169 @@ namespace BioSphereLab.DependencyInjection.Infrastructure
     {
         public const string DefaultKey = "";
 
-        private readonly Dictionary<BindingId, Func<IInjectionContainer, object>> bindings = new();
-        private readonly Dictionary<Type, string> activeKeys = new();
+        private readonly Dictionary<BindingId, Func<IInjectionContainer, object>> m_bindings = new();
+        private readonly Dictionary<Type, string> m_activeKeys = new();
 
-        public void Register<TService>(TService instance, string key = null) where TService : class
+        public void Register<TService>(TService p_instance, string p_key = null) where TService : class
         {
-            if (instance is null)
+            if (p_instance is null)
             {
-                throw new ArgumentNullException(nameof(instance));
+                throw new ArgumentNullException(nameof(p_instance));
             }
 
-            BindingId bindingId = BindingId.Create<TService>(key);
-            bindings[bindingId] = _ => instance;
+            BindingId bindingId = BindingId.Create<TService>(p_key);
+            m_bindings[bindingId] = _ => p_instance;
 
             EnsureActiveKey<TService>(bindingId.Key);
         }
 
-        public void Register<TService, TImplementation>(string key = null)
+        public void Register<TService, TImplementation>(string p_key = null)
             where TService : class
             where TImplementation : class, TService, new()
         {
-            RegisterFactory<TService>(_ => new TImplementation(), key);
+            RegisterFactory<TService>(_ => new TImplementation(), p_key);
         }
 
-        public void RegisterFactory<TService>(Func<IInjectionContainer, TService> factory, string key = null)
+        public void RegisterFactory<TService>(Func<IInjectionContainer, TService> p_factory, string p_key = null)
             where TService : class
         {
-            if (factory is null)
+            if (p_factory is null)
             {
-                throw new ArgumentNullException(nameof(factory));
+                throw new ArgumentNullException(nameof(p_factory));
             }
 
-            BindingId bindingId = BindingId.Create<TService>(key);
-            bindings[bindingId] = container => factory(container);
+            BindingId bindingId = BindingId.Create<TService>(p_key);
+            m_bindings[bindingId] = p_container => p_factory(p_container);
 
             EnsureActiveKey<TService>(bindingId.Key);
         }
 
-        public TSystem RegisterSystem<TService, TSystem, TSystemGroup>(World world, string key = null)
+        public TSystem RegisterSystem<TService, TSystem, TSystemGroup>(World p_world, string p_key = null)
             where TService : class
             where TSystem : SystemBase, TService
             where TSystemGroup : ComponentSystemGroup
         {
-            if (world == null)
+            if (p_world == null)
             {
-                throw new ArgumentNullException(nameof(world));
+                throw new ArgumentNullException(nameof(p_world));
             }
 
-            TSystem system = world.GetOrCreateSystemManaged<TSystem>();
-            Register<TService>(system, key);
+            TSystem system = p_world.GetOrCreateSystemManaged<TSystem>();
+            Register<TService>(system, p_key);
 
             if (system is InjectedSystemBase injectedSystem)
             {
                 injectedSystem.SetContainer(this);
             }
 
-            TSystemGroup systemGroup = world.GetOrCreateSystemManaged<TSystemGroup>();
+            TSystemGroup systemGroup = p_world.GetOrCreateSystemManaged<TSystemGroup>();
             systemGroup.AddSystemToUpdateList(system);
             systemGroup.SortSystems();
 
             return system;
         }
 
-        public bool Has<TService>(string key = null) where TService : class
+        public bool Has<TService>(string p_key = null) where TService : class
         {
-            BindingId bindingId = BindingId.Create<TService>(ResolveLookupKey<TService>(key));
-            return bindings.ContainsKey(bindingId);
+            BindingId bindingId = BindingId.Create<TService>(ResolveLookupKey<TService>(p_key));
+            return m_bindings.ContainsKey(bindingId);
         }
 
-        public bool TryResolve<TService>(out TService service, string key = null) where TService : class
+        public bool TryResolve<TService>(out TService o_service, string p_key = null) where TService : class
         {
-            BindingId bindingId = BindingId.Create<TService>(ResolveLookupKey<TService>(key));
+            BindingId bindingId = BindingId.Create<TService>(ResolveLookupKey<TService>(p_key));
 
-            if (bindings.TryGetValue(bindingId, out Func<IInjectionContainer, object> factory))
+            if (m_bindings.TryGetValue(bindingId, out Func<IInjectionContainer, object> o_factory))
             {
-                service = (TService)factory(this);
+                o_service = (TService)o_factory(this);
                 return true;
             }
 
-            service = null;
+            o_service = null;
             return false;
         }
 
-        public TService Resolve<TService>(string key = null) where TService : class
+        public TService Resolve<TService>(string p_key = null) where TService : class
         {
-            if (TryResolve<TService>(out TService service, key))
+            if (TryResolve<TService>(out TService o_service, p_key))
             {
-                return service;
+                return o_service;
             }
 
-            string lookupKey = ResolveLookupKey<TService>(key);
+            string lookupKey = ResolveLookupKey<TService>(p_key);
             string label = string.IsNullOrWhiteSpace(lookupKey) ? "default" : lookupKey;
             throw new InvalidOperationException($"No dependency registered for {typeof(TService).Name} with key '{label}'.");
         }
 
-        public void Switch<TService>(string key) where TService : class
+        public void Switch<TService>(string p_key) where TService : class
         {
-            string normalizedKey = NormalizeKey(key);
+            string normalizedKey = NormalizeKey(p_key);
             BindingId bindingId = BindingId.Create<TService>(normalizedKey);
 
-            if (!bindings.ContainsKey(bindingId))
+            if (!m_bindings.ContainsKey(bindingId))
             {
                 string label = string.IsNullOrWhiteSpace(normalizedKey) ? "default" : normalizedKey;
                 throw new InvalidOperationException($"Cannot switch {typeof(TService).Name} to missing key '{label}'.");
             }
 
-            activeKeys[typeof(TService)] = normalizedKey;
+            m_activeKeys[typeof(TService)] = normalizedKey;
         }
 
         public string GetActiveKey<TService>() where TService : class
         {
-            return activeKeys.TryGetValue(typeof(TService), out string key) ? key : DefaultKey;
+            return m_activeKeys.TryGetValue(typeof(TService), out string o_key) ? o_key : DefaultKey;
         }
 
-        private void EnsureActiveKey<TService>(string key) where TService : class
+        private void EnsureActiveKey<TService>(string p_key) where TService : class
         {
             Type serviceType = typeof(TService);
 
-            if (!activeKeys.ContainsKey(serviceType))
+            if (!m_activeKeys.ContainsKey(serviceType))
             {
-                activeKeys[serviceType] = key;
+                m_activeKeys[serviceType] = p_key;
             }
         }
 
-        private string ResolveLookupKey<TService>(string key) where TService : class
+        private string ResolveLookupKey<TService>(string p_key) where TService : class
         {
-            if (!string.IsNullOrWhiteSpace(key))
+            if (!string.IsNullOrWhiteSpace(p_key))
             {
-                return NormalizeKey(key);
+                return NormalizeKey(p_key);
             }
 
-            return activeKeys.TryGetValue(typeof(TService), out string activeKey) ? activeKey : DefaultKey;
+            return m_activeKeys.TryGetValue(typeof(TService), out string o_activeKey) ? o_activeKey : DefaultKey;
         }
 
-        private static string NormalizeKey(string key)
+        private static string NormalizeKey(string p_key)
         {
-            return string.IsNullOrWhiteSpace(key) ? DefaultKey : key.Trim();
+            return string.IsNullOrWhiteSpace(p_key) ? DefaultKey : p_key.Trim();
         }
 
         private readonly struct BindingId : IEquatable<BindingId>
         {
-            public BindingId(Type serviceType, string key)
+            public BindingId(Type p_serviceType, string p_key)
             {
-                ServiceType = serviceType;
-                Key = NormalizeKey(key);
+                ServiceType = p_serviceType;
+                Key = NormalizeKey(p_key);
             }
 
             public Type ServiceType { get; }
 
             public string Key { get; }
 
-            public static BindingId Create<TService>(string key)
+            public static BindingId Create<TService>(string p_key)
             {
-                return new BindingId(typeof(TService), key);
+                return new BindingId(typeof(TService), p_key);
             }
 
-            public bool Equals(BindingId other)
+            public bool Equals(BindingId p_other)
             {
-                return ServiceType == other.ServiceType && Key == other.Key;
+                return ServiceType == p_other.ServiceType && Key == p_other.Key;
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object p_obj)
             {
-                return obj is BindingId other && Equals(other);
+                return p_obj is BindingId other && Equals(other);
             }
 
             public override int GetHashCode()

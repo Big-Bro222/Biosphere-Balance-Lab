@@ -2,3 +2,67 @@ root = true
 
 [*.cs]
 dotnet_style_namespace_match_folder = true:suggestion
+
+# Naming conventions shared by Rider/ReSharper and Roslyn-compatible tooling.
+
+dotnet_naming_rule.interfaces_should_start_with_i.severity = warning
+dotnet_naming_rule.interfaces_should_start_with_i.symbols = interfaces
+dotnet_naming_rule.interfaces_should_start_with_i.style = interface_style
+
+dotnet_naming_rule.types_should_be_pascal_case.severity = warning
+dotnet_naming_rule.types_should_be_pascal_case.symbols = types
+dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case_style
+
+dotnet_naming_rule.public_members_should_be_pascal_case.severity = warning
+dotnet_naming_rule.public_members_should_be_pascal_case.symbols = public_members
+dotnet_naming_rule.public_members_should_be_pascal_case.style = pascal_case_style
+
+dotnet_naming_rule.constants_should_be_pascal_case.severity = warning
+dotnet_naming_rule.constants_should_be_pascal_case.symbols = constants
+dotnet_naming_rule.constants_should_be_pascal_case.style = pascal_case_style
+
+dotnet_naming_rule.private_fields_should_have_m_prefix.severity = warning
+dotnet_naming_rule.private_fields_should_have_m_prefix.symbols = private_fields
+dotnet_naming_rule.private_fields_should_have_m_prefix.style = m_prefixed_camel_case_style
+
+dotnet_naming_rule.private_properties_should_have_m_prefix.severity = warning
+dotnet_naming_rule.private_properties_should_have_m_prefix.symbols = private_properties
+dotnet_naming_rule.private_properties_should_have_m_prefix.style = m_prefixed_camel_case_style
+
+dotnet_naming_rule.out_parameters_should_have_o_prefix.severity = warning
+dotnet_naming_rule.out_parameters_should_have_o_prefix.symbols = out_parameters
+dotnet_naming_rule.out_parameters_should_have_o_prefix.style = o_prefixed_camel_case_style
+
+dotnet_naming_rule.parameters_should_have_p_prefix.severity = warning
+dotnet_naming_rule.parameters_should_have_p_prefix.symbols = parameters
+dotnet_naming_rule.parameters_should_have_p_prefix.style = p_prefixed_camel_case_style
+
+dotnet_naming_rule.locals_should_be_camel_case.severity = suggestion
+dotnet_naming_rule.locals_should_be_camel_case.symbols = locals
+dotnet_naming_rule.locals_should_be_camel_case.style = camel_case_style
+
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum, delegate
+dotnet_naming_symbols.public_members.applicable_kinds = method, property, event, field
+dotnet_naming_symbols.public_members.applicable_accessibilities = public, internal, protected, protected_internal, private_protected
+dotnet_naming_symbols.constants.applicable_kinds = field
+dotnet_naming_symbols.constants.required_modifiers = const
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_properties.applicable_kinds = property
+dotnet_naming_symbols.private_properties.applicable_accessibilities = private
+dotnet_naming_symbols.out_parameters.applicable_kinds = parameter
+dotnet_naming_symbols.out_parameters.required_modifiers = out
+dotnet_naming_symbols.parameters.applicable_kinds = parameter
+dotnet_naming_symbols.locals.applicable_kinds = local
+
+dotnet_naming_style.interface_style.required_prefix = I
+dotnet_naming_style.interface_style.capitalization = pascal_case
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+dotnet_naming_style.camel_case_style.capitalization = camel_case
+dotnet_naming_style.m_prefixed_camel_case_style.required_prefix = m_
+dotnet_naming_style.m_prefixed_camel_case_style.capitalization = camel_case
+dotnet_naming_style.p_prefixed_camel_case_style.required_prefix = p_
+dotnet_naming_style.p_prefixed_camel_case_style.capitalization = camel_case
+dotnet_naming_style.o_prefixed_camel_case_style.required_prefix = o_
+dotnet_naming_style.o_prefixed_camel_case_style.capitalization = camel_case

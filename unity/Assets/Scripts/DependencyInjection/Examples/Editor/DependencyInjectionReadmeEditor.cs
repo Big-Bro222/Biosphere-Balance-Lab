@@ -17,19 +17,19 @@ namespace BioSphereLab.DependencyInjection.Examples.Editor
         private const string UsageExamplePath = "Assets/Scripts/DependencyInjection/Examples/DependencyInjectionUsageExample.cs";
         private const string EcsExamplePath = "Assets/Scripts/DependencyInjection/Examples/ExampleSystem.cs";
 
-        private GUIStyle titleStyle;
-        private GUIStyle sectionStyle;
-        private GUIStyle bodyStyle;
-        private GUIStyle codeStyle;
+        private GUIStyle m_titleStyle;
+        private GUIStyle m_sectionStyle;
+        private GUIStyle m_bodyStyle;
+        private GUIStyle m_codeStyle;
 
         public override void OnInspectorGUI()
         {
             EnsureStyles();
 
-            EditorGUILayout.LabelField("Dependency Injection", titleStyle);
+            EditorGUILayout.LabelField("Dependency Injection", m_titleStyle);
             EditorGUILayout.LabelField(
                 "Runtime dependency registration for scene objects and ECS systems.",
-                bodyStyle);
+                m_bodyStyle);
 
             DrawSection("Setup");
             DrawStep("1", "Create or select a StorageInjection asset.");
@@ -41,11 +41,11 @@ namespace BioSphereLab.DependencyInjection.Examples.Editor
             DrawSection("Runtime Flow");
             EditorGUILayout.LabelField(
                 "InjectionScope -> IInjectionInstaller -> InjectionContainer -> EcsInjectionRegistry -> ExampleSystem",
-                codeStyle);
+                m_codeStyle);
 
             DrawSection("Namespaces");
-            EditorGUILayout.LabelField("BioSphereLab.DependencyInjection.Infrastructure", codeStyle);
-            EditorGUILayout.LabelField("BioSphereLab.DependencyInjection.Examples", codeStyle);
+            EditorGUILayout.LabelField("BioSphereLab.DependencyInjection.Infrastructure", m_codeStyle);
+            EditorGUILayout.LabelField("BioSphereLab.DependencyInjection.Examples", m_codeStyle);
 
             DrawSection("Quick Actions");
             using (new EditorGUILayout.HorizontalScope())
@@ -113,60 +113,60 @@ namespace BioSphereLab.DependencyInjection.Examples.Editor
             EditorGUIUtility.PingObject(storageInjection);
         }
 
-        private static void SelectAsset(string assetPath, bool openAsset)
+        private static void SelectAsset(string p_assetPath, bool p_openAsset)
         {
-            Object asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+            Object asset = AssetDatabase.LoadAssetAtPath<Object>(p_assetPath);
 
             if (asset == null)
             {
-                EditorUtility.DisplayDialog("Asset Not Found", assetPath, "OK");
+                EditorUtility.DisplayDialog("Asset Not Found", p_assetPath, "OK");
                 return;
             }
 
             Selection.activeObject = asset;
             EditorGUIUtility.PingObject(asset);
 
-            if (openAsset)
+            if (p_openAsset)
             {
                 AssetDatabase.OpenAsset(asset);
             }
         }
 
-        private void DrawSection(string text)
+        private void DrawSection(string p_text)
         {
             EditorGUILayout.Space(8);
-            EditorGUILayout.LabelField(text, sectionStyle);
+            EditorGUILayout.LabelField(p_text, m_sectionStyle);
         }
 
-        private void DrawStep(string number, string text)
+        private void DrawStep(string p_number, string p_text)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
-                GUILayout.Label(number + ".", GUILayout.Width(22));
-                EditorGUILayout.LabelField(text, bodyStyle);
+                GUILayout.Label(p_number + ".", GUILayout.Width(22));
+                EditorGUILayout.LabelField(p_text, m_bodyStyle);
             }
         }
 
         private void EnsureStyles()
         {
-            titleStyle ??= new GUIStyle(EditorStyles.boldLabel)
+            m_titleStyle ??= new GUIStyle(EditorStyles.boldLabel)
             {
                 fontSize = 18,
                 wordWrap = true
             };
 
-            sectionStyle ??= new GUIStyle(EditorStyles.boldLabel)
+            m_sectionStyle ??= new GUIStyle(EditorStyles.boldLabel)
             {
                 fontSize = 13,
                 wordWrap = true
             };
 
-            bodyStyle ??= new GUIStyle(EditorStyles.label)
+            m_bodyStyle ??= new GUIStyle(EditorStyles.label)
             {
                 wordWrap = true
             };
 
-            codeStyle ??= new GUIStyle(EditorStyles.helpBox)
+            m_codeStyle ??= new GUIStyle(EditorStyles.helpBox)
             {
                 font = EditorStyles.miniFont,
                 wordWrap = true

@@ -8,12 +8,12 @@ namespace BioSphereLab.DependencyInjection.Examples
     [DisableAutoCreation]
     public partial class ExampleSystem : SystemBase
     {
-        private bool logged;
-        private bool missingDependencyLogged;
+        private bool m_logged;
+        private bool m_missingDependencyLogged;
 
         protected override void OnUpdate()
         {
-            if (logged)
+            if (m_logged)
             {
                 Enabled = false;
                 return;
@@ -21,23 +21,23 @@ namespace BioSphereLab.DependencyInjection.Examples
 
             bool resolved = EcsInjectionRegistry.TryResolve(
                 World,
-                out IBiosphereSpawnPolicy policy);
+                out IBiosphereSpawnPolicy o_policy);
 
             if (!resolved)
             {
-                if (!missingDependencyLogged)
+                if (!m_missingDependencyLogged)
                 {
                     Debug.Log("ExampleSystem did not find DI yet. Make sure GameBootstrapper registered dependencies for the ECS world.");
-                    missingDependencyLogged = true;
+                    m_missingDependencyLogged = true;
                 }
 
                 return;
             }
 
             Debug.Log(
-                $"ExampleSystem resolved DI policy '{policy.Name}' in {World.Name}: plants={policy.InitialPlants}, animals={policy.InitialAnimals}.");
+                $"ExampleSystem resolved DI policy '{o_policy.Name}' in {World.Name}: plants={o_policy.InitialPlants}, animals={o_policy.InitialAnimals}.");
 
-            logged = true;
+            m_logged = true;
             Enabled = false;
         }
     }

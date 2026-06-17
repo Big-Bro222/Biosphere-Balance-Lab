@@ -10,7 +10,7 @@ Runtime dependency registration for scene objects and ECS systems.
 ## Setup
 
 1. Create a `StorageInjection` asset from `Create > BioSphereLab > Dependency Injection > Storage Injection`.
-2. Add prefab entries such as `plant` or `animal` to the asset.
+2. Add prefab, material, or mesh entries such as `plant`, `leaf-material`, or `soil-cell-mesh` to the asset.
 3. Add an empty GameObject named `Dependency Scope`.
 4. Add `InjectionScope` to it and assign the `StorageInjection` asset.
 5. Add `ExampleBiosphereDependencyInstaller` to the same GameObject.
@@ -67,3 +67,16 @@ public partial class ExampleSystem : SystemBase
 ```
 
 Keep simulation data in ECS components. Use DI for managed configuration, factories, prefab lookups, adapters, and bridge services.
+
+## Storage usage
+
+`StorageInjection` is registered as `IAssetStorage`.
+Use it when code needs prefabs, materials, and meshes:
+
+```csharp
+IAssetStorage assetStorage = container.Resolve<IAssetStorage>();
+
+GameObject plantPrefab = assetStorage.GetPrefab("plant");
+Material leafMaterial = assetStorage.GetMaterial("leaf-material");
+Mesh soilCellMesh = assetStorage.GetMesh("soil-cell-mesh");
+```

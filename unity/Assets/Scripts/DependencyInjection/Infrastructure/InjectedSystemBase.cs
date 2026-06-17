@@ -5,38 +5,38 @@ namespace BioSphereLab.DependencyInjection.Infrastructure
 {
     public abstract partial class InjectedSystemBase : SystemBase
     {
-        private IInjectionContainer container;
+        private IInjectionContainer m_container;
 
         protected bool HasContainer
         {
-            get { return container != null; }
+            get { return m_container != null; }
         }
 
-        protected bool TryResolve<TService>(out TService service, string key = null) where TService : class
+        protected bool TryResolve<TService>(out TService o_service, string p_key = null) where TService : class
         {
-            if (container != null)
+            if (m_container != null)
             {
-                return container.TryResolve(out service, key);
+                return m_container.TryResolve(out o_service, p_key);
             }
 
-            service = null;
+            o_service = null;
             return false;
         }
 
-        protected TService Resolve<TService>(string key = null) where TService : class
+        protected TService Resolve<TService>(string p_key = null) where TService : class
         {
-            if (TryResolve<TService>(out TService service, key))
+            if (TryResolve<TService>(out TService o_service, p_key))
             {
-                return service;
+                return o_service;
             }
 
             throw new InvalidOperationException(
                 $"No dependency container or service binding is available for {typeof(TService).Name}.");
         }
 
-        internal void SetContainer(IInjectionContainer injectionContainer)
+        internal void SetContainer(IInjectionContainer p_injectionContainer)
         {
-            container = injectionContainer;
+            m_container = p_injectionContainer;
         }
     }
 }

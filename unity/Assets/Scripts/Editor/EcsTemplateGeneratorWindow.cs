@@ -13,16 +13,16 @@ namespace BioSphereLab.Editor
         private const string DefaultComponentNamespace = "BioSphereLab.Components";
         private const string DefaultSystemNamespace = "BioSphereLab.Systems";
 
-        private static readonly Regex IdentifierRegex = new Regex(
+        private static readonly Regex m_identifierRegex = new Regex(
             @"^[_a-zA-Z][_a-zA-Z0-9]*$",
             RegexOptions.Compiled);
 
-        private TemplateKind templateKind = TemplateKind.Component;
-        private string typeName = "NewComponent";
-        private string namespaceName = DefaultComponentNamespace;
-        private string targetFolder = DefaultComponentFolder;
-        private bool overwriteExisting;
-        private Vector2 scrollPosition;
+        private TemplateKind m_templateKind = TemplateKind.Component;
+        private string m_typeName = "NewComponent";
+        private string m_namespaceName = DefaultComponentNamespace;
+        private string m_targetFolder = DefaultComponentFolder;
+        private bool m_overwriteExisting;
+        private Vector2 m_scrollPosition;
 
         private enum TemplateKind
         {
@@ -71,52 +71,52 @@ namespace BioSphereLab.Editor
             OpenWithPreset(TemplateKind.ISystem);
         }
 
-        private static void OpenWithPreset(TemplateKind kind)
+        private static void OpenWithPreset(TemplateKind p_kind)
         {
             Open();
 
             EcsTemplateGeneratorWindow window = GetWindow<EcsTemplateGeneratorWindow>();
-            window.templateKind = kind;
-            window.ApplyDefaultsForKind(kind);
+            window.m_templateKind = p_kind;
+            window.ApplyDefaultsForKind(p_kind);
 
             string selectedFolder = GetSelectedProjectFolder();
             if (!string.IsNullOrEmpty(selectedFolder))
             {
-                window.targetFolder = selectedFolder;
+                window.m_targetFolder = selectedFolder;
             }
         }
 
         private void OnGUI()
         {
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+            m_scrollPosition = EditorGUILayout.BeginScrollView(m_scrollPosition);
 
             EditorGUILayout.LabelField("Generate ECS Code", EditorStyles.boldLabel);
             EditorGUILayout.Space(4f);
 
             EditorGUI.BeginChangeCheck();
-            templateKind = (TemplateKind)EditorGUILayout.EnumPopup("Template", templateKind);
+            m_templateKind = (TemplateKind)EditorGUILayout.EnumPopup("Template", m_templateKind);
             if (EditorGUI.EndChangeCheck())
             {
-                ApplyDefaultsForKind(templateKind);
+                ApplyDefaultsForKind(m_templateKind);
             }
 
-            typeName = EditorGUILayout.TextField("Type Name", typeName);
-            namespaceName = EditorGUILayout.TextField("Namespace", namespaceName);
+            m_typeName = EditorGUILayout.TextField("Type Name", m_typeName);
+            m_namespaceName = EditorGUILayout.TextField("Namespace", m_namespaceName);
 
             EditorGUILayout.BeginHorizontal();
-            targetFolder = EditorGUILayout.TextField("Target Folder", targetFolder);
+            m_targetFolder = EditorGUILayout.TextField("Target Folder", m_targetFolder);
             if (GUILayout.Button("Selected", GUILayout.Width(78f)))
             {
                 string selectedFolder = GetSelectedProjectFolder();
                 if (!string.IsNullOrEmpty(selectedFolder))
                 {
-                    targetFolder = selectedFolder;
+                    m_targetFolder = selectedFolder;
                 }
             }
 
             EditorGUILayout.EndHorizontal();
 
-            overwriteExisting = EditorGUILayout.Toggle("Overwrite Existing", overwriteExisting);
+            m_overwriteExisting = EditorGUILayout.Toggle("Overwrite Existing", m_overwriteExisting);
 
             EditorGUILayout.Space(8f);
             DrawPreview();
@@ -127,34 +127,34 @@ namespace BioSphereLab.Editor
             EditorGUILayout.EndScrollView();
         }
 
-        private void ApplyDefaultsForKind(TemplateKind kind)
+        private void ApplyDefaultsForKind(TemplateKind p_kind)
         {
-            switch (kind)
+            switch (p_kind)
             {
                 case TemplateKind.SystemBase:
-                    typeName = "NewSystem";
-                    namespaceName = DefaultSystemNamespace;
-                    targetFolder = DefaultSystemFolder;
+                    m_typeName = "NewSystem";
+                    m_namespaceName = DefaultSystemNamespace;
+                    m_targetFolder = DefaultSystemFolder;
                     break;
                 case TemplateKind.ISystem:
-                    typeName = "NewSystem";
-                    namespaceName = DefaultSystemNamespace;
-                    targetFolder = DefaultSystemFolder;
+                    m_typeName = "NewSystem";
+                    m_namespaceName = DefaultSystemNamespace;
+                    m_targetFolder = DefaultSystemFolder;
                     break;
                 case TemplateKind.TagComponent:
-                    typeName = "NewTag";
-                    namespaceName = $"{DefaultComponentNamespace}.Tag";
-                    targetFolder = $"{DefaultComponentFolder}/Tag";
+                    m_typeName = "NewTag";
+                    m_namespaceName = $"{DefaultComponentNamespace}.Tag";
+                    m_targetFolder = $"{DefaultComponentFolder}/Tag";
                     break;
                 case TemplateKind.PlainStruct:
-                    typeName = "NewStruct";
-                    namespaceName = DefaultComponentNamespace;
-                    targetFolder = DefaultComponentFolder;
+                    m_typeName = "NewStruct";
+                    m_namespaceName = DefaultComponentNamespace;
+                    m_targetFolder = DefaultComponentFolder;
                     break;
                 default:
-                    typeName = "NewComponent";
-                    namespaceName = DefaultComponentNamespace;
-                    targetFolder = DefaultComponentFolder;
+                    m_typeName = "NewComponent";
+                    m_namespaceName = DefaultComponentNamespace;
+                    m_targetFolder = DefaultComponentFolder;
                     break;
             }
         }
@@ -166,7 +166,7 @@ namespace BioSphereLab.Editor
             using (new EditorGUI.DisabledScope(true))
             {
                 EditorGUILayout.TextArea(
-                    BuildTemplate(SanitizeTypeName(typeName), namespaceName),
+                    BuildTemplate(SanitizeTypeName(m_typeName), m_namespaceName),
                     GUILayout.MinHeight(150f));
             }
         }
@@ -192,8 +192,8 @@ namespace BioSphereLab.Editor
 
         private void CreateScript()
         {
-            string cleanTypeName = SanitizeTypeName(typeName);
-            string normalizedFolder = NormalizeAssetPath(targetFolder);
+            string cleanTypeName = SanitizeTypeName(m_typeName);
+            string normalizedFolder = NormalizeAssetPath(m_targetFolder);
             string projectRoot = Directory.GetParent(Application.dataPath).FullName;
             string absoluteFolder = Path.Combine(projectRoot, normalizedFolder);
             string absolutePath = Path.Combine(absoluteFolder, $"{cleanTypeName}.cs");
@@ -203,7 +203,7 @@ namespace BioSphereLab.Editor
                 Directory.CreateDirectory(absoluteFolder);
             }
 
-            if (File.Exists(absolutePath) && !overwriteExisting)
+            if (File.Exists(absolutePath) && !m_overwriteExisting)
             {
                 EditorUtility.DisplayDialog(
                     "Script already exists",
@@ -214,7 +214,7 @@ namespace BioSphereLab.Editor
 
             File.WriteAllText(
                 absolutePath,
-                BuildTemplate(cleanTypeName, namespaceName),
+                BuildTemplate(cleanTypeName, m_namespaceName),
                 new UTF8Encoding(false));
 
             AssetDatabase.Refresh();
@@ -227,24 +227,24 @@ namespace BioSphereLab.Editor
 
         private string GetValidationError()
         {
-            string cleanTypeName = SanitizeTypeName(typeName);
+            string cleanTypeName = SanitizeTypeName(m_typeName);
 
             if (string.IsNullOrWhiteSpace(cleanTypeName))
             {
                 return "Type name is required.";
             }
 
-            if (!IdentifierRegex.IsMatch(cleanTypeName))
+            if (!m_identifierRegex.IsMatch(cleanTypeName))
             {
                 return "Type name must be a valid C# identifier.";
             }
 
-            if (!IsValidNamespace(namespaceName))
+            if (!IsValidNamespace(m_namespaceName))
             {
                 return "Namespace must contain valid C# identifiers separated by dots.";
             }
 
-            string normalizedFolder = NormalizeAssetPath(targetFolder);
+            string normalizedFolder = NormalizeAssetPath(m_targetFolder);
             if (string.IsNullOrWhiteSpace(normalizedFolder) ||
                 (normalizedFolder != "Assets" && !normalizedFolder.StartsWith("Assets/")))
             {
@@ -254,31 +254,31 @@ namespace BioSphereLab.Editor
             return null;
         }
 
-        private string BuildTemplate(string cleanTypeName, string cleanNamespace)
+        private string BuildTemplate(string p_cleanTypeName, string p_cleanNamespace)
         {
-            switch (templateKind)
+            switch (m_templateKind)
             {
                 case TemplateKind.TagComponent:
-                    return BuildTagComponentTemplate(cleanTypeName, cleanNamespace);
+                    return BuildTagComponentTemplate(p_cleanTypeName, p_cleanNamespace);
                 case TemplateKind.PlainStruct:
-                    return BuildPlainStructTemplate(cleanTypeName, cleanNamespace);
+                    return BuildPlainStructTemplate(p_cleanTypeName, p_cleanNamespace);
                 case TemplateKind.SystemBase:
-                    return BuildSystemBaseTemplate(cleanTypeName, cleanNamespace);
+                    return BuildSystemBaseTemplate(p_cleanTypeName, p_cleanNamespace);
                 case TemplateKind.ISystem:
-                    return BuildISystemTemplate(cleanTypeName, cleanNamespace);
+                    return BuildISystemTemplate(p_cleanTypeName, p_cleanNamespace);
                 default:
-                    return BuildComponentTemplate(cleanTypeName, cleanNamespace);
+                    return BuildComponentTemplate(p_cleanTypeName, p_cleanNamespace);
             }
         }
 
-        private static string BuildComponentTemplate(string cleanTypeName, string cleanNamespace)
+        private static string BuildComponentTemplate(string p_cleanTypeName, string p_cleanNamespace)
         {
             return
 $@"using Unity.Entities;
 
-namespace {cleanNamespace}
+namespace {p_cleanNamespace}
 {{
-    public struct {cleanTypeName} : IComponentData
+    public struct {p_cleanTypeName} : IComponentData
     {{
         public float Value;
     }}
@@ -286,41 +286,41 @@ namespace {cleanNamespace}
 ";
         }
 
-        private static string BuildTagComponentTemplate(string cleanTypeName, string cleanNamespace)
+        private static string BuildTagComponentTemplate(string p_cleanTypeName, string p_cleanNamespace)
         {
             return
 $@"using Unity.Entities;
 
-namespace {cleanNamespace}
+namespace {p_cleanNamespace}
 {{
-    public struct {cleanTypeName} : IComponentData
+    public struct {p_cleanTypeName} : IComponentData
     {{
     }}
 }}
 ";
         }
 
-        private static string BuildPlainStructTemplate(string cleanTypeName, string cleanNamespace)
+        private static string BuildPlainStructTemplate(string p_cleanTypeName, string p_cleanNamespace)
         {
             return
-$@"namespace {cleanNamespace}
+$@"namespace {p_cleanNamespace}
 {{
-    public struct {cleanTypeName}
+    public struct {p_cleanTypeName}
     {{
     }}
 }}
 ";
         }
 
-        private static string BuildSystemBaseTemplate(string cleanTypeName, string cleanNamespace)
+        private static string BuildSystemBaseTemplate(string p_cleanTypeName, string p_cleanNamespace)
         {
             return
 $@"using Unity.Entities;
 
-namespace {cleanNamespace}
+namespace {p_cleanNamespace}
 {{
     [UpdateInGroup(typeof(SimulationSystemGroup))]
-    public partial class {cleanTypeName} : SystemBase
+    public partial class {p_cleanTypeName} : SystemBase
     {{
         protected override void OnUpdate()
         {{
@@ -330,25 +330,25 @@ namespace {cleanNamespace}
 ";
         }
 
-        private static string BuildISystemTemplate(string cleanTypeName, string cleanNamespace)
+        private static string BuildISystemTemplate(string p_cleanTypeName, string p_cleanNamespace)
         {
             return
 $@"using Unity.Burst;
 using Unity.Entities;
 
-namespace {cleanNamespace}
+namespace {p_cleanNamespace}
 {{
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
-    public partial struct {cleanTypeName} : ISystem
+    public partial struct {p_cleanTypeName} : ISystem
     {{
         [BurstCompile]
-        public void OnCreate(ref SystemState state)
+        public void OnCreate(ref SystemState p_state)
         {{
         }}
 
         [BurstCompile]
-        public void OnUpdate(ref SystemState state)
+        public void OnUpdate(ref SystemState p_state)
         {{
         }}
     }}
@@ -356,17 +356,17 @@ namespace {cleanNamespace}
 ";
         }
 
-        private static bool IsValidNamespace(string value)
+        private static bool IsValidNamespace(string p_value)
         {
-            if (string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(p_value))
             {
                 return false;
             }
 
-            string[] parts = value.Split('.');
+            string[] parts = p_value.Split('.');
             for (int i = 0; i < parts.Length; i++)
             {
-                if (!IdentifierRegex.IsMatch(parts[i]))
+                if (!m_identifierRegex.IsMatch(parts[i]))
                 {
                     return false;
                 }
@@ -375,16 +375,16 @@ namespace {cleanNamespace}
             return true;
         }
 
-        private static string SanitizeTypeName(string value)
+        private static string SanitizeTypeName(string p_value)
         {
-            return string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
+            return string.IsNullOrWhiteSpace(p_value) ? string.Empty : p_value.Trim();
         }
 
-        private static string NormalizeAssetPath(string path)
+        private static string NormalizeAssetPath(string p_path)
         {
-            return string.IsNullOrWhiteSpace(path)
+            return string.IsNullOrWhiteSpace(p_path)
                 ? string.Empty
-                : path.Replace('\\', '/').Trim().TrimEnd('/');
+                : p_path.Replace('\\', '/').Trim().TrimEnd('/');
         }
 
         private static string GetSelectedProjectFolder()

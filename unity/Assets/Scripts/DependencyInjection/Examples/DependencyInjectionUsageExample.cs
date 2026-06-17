@@ -1,30 +1,34 @@
 using BioSphereLab.DependencyInjection.Infrastructure;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace BioSphereLab.DependencyInjection.Examples
 {
     public sealed class DependencyInjectionUsageExample : MonoBehaviour
     {
-        [SerializeField] private InjectionScope scope;
-        [SerializeField] private bool useStressPolicy;
-        [SerializeField] private string examplePrefabKey = "plant";
+        [FormerlySerializedAs("scope")]
+        [SerializeField] private InjectionScope m_scope;
+        [FormerlySerializedAs("useStressPolicy")]
+        [SerializeField] private bool m_useStressPolicy;
+        [FormerlySerializedAs("examplePrefabKey")]
+        [SerializeField] private string m_examplePrefabKey = "plant";
 
         private void Start()
         {
-            if (scope == null)
+            if (m_scope == null)
             {
-                scope = FindAnyObjectByType<InjectionScope>();
+                m_scope = FindAnyObjectByType<InjectionScope>();
             }
 
-            if (scope == null)
+            if (m_scope == null)
             {
                 Debug.LogWarning("No InjectionScope found. Add one to the scene before running this example.");
                 return;
             }
 
-            IInjectionContainer container = scope.Container;
+            IInjectionContainer container = m_scope.Container;
 
-            if (useStressPolicy)
+            if (m_useStressPolicy)
             {
                 container.Switch<IBiosphereSpawnPolicy>("stress");
             }
@@ -33,10 +37,10 @@ namespace BioSphereLab.DependencyInjection.Examples
             Debug.Log(
                 $"DI example using '{policy.Name}' policy: plants={policy.InitialPlants}, animals={policy.InitialAnimals}.");
 
-            if (container.TryResolve<IPrefabStorage>(out IPrefabStorage prefabStorage) &&
-                prefabStorage.TryGetPrefab(examplePrefabKey, out GameObject prefab))
+            if (container.TryResolve<IAssetStorage>(out IAssetStorage o_assetStorage) &&
+                o_assetStorage.TryGetPrefab(m_examplePrefabKey, out GameObject o_prefab))
             {
-                Debug.Log($"StorageInjection resolved prefab '{prefab.name}' with key '{examplePrefabKey}'.");
+                Debug.Log($"StorageInjection resolved prefab '{o_prefab.name}' with key '{m_examplePrefabKey}'.");
             }
         }
     }

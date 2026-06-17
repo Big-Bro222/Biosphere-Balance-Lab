@@ -52,6 +52,7 @@ Before making architectural, dependency, or framework-level decisions, read:
 * `docs/project-brief.md`
 * `docs/tech-stack.md`
 * `docs/architecture.md`
+* `docs/code-standards.md`
 * `docs/decision-log.md`
 * `docs/roadmap.md`
 
@@ -133,9 +134,11 @@ Expected responsibilities:
 
 ### Unity / C#
 
+* Before making Unity C# changes, read `docs/code-standards.md`.
 * Keep simulation systems modular and testable.
 * Prefer ECS where it demonstrates clear value.
 * Use explicit C# type names instead of `var` in project code and examples.
+* Follow the repository naming convention: private fields/properties use `m_`, method parameters use `p_`, and `out` parameters use `o_`.
 * Avoid mixing UI-specific concerns into simulation logic.
 * Keep WebGPU/browser integration concerns separate from core simulation logic.
 * Add Unity tests for simulation rules and data transformations where practical.
