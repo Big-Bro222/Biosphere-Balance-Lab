@@ -59,6 +59,7 @@ namespace BioSphereLab
         
         private static void RegisterSystems(World p_world, InjectionContainer p_container)
         {
+            p_container.RegisterSystem<ICreatureMetadataSystem, CreatureMetadataSystem, InitializationSystemGroup>(p_world);
             p_container.RegisterSystem<ICreatureInitSystem, CreatureInitSystem, InitializationSystemGroup>(p_world);
         }
     }
