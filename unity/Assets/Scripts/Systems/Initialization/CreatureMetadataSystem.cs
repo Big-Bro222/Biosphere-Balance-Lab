@@ -34,7 +34,8 @@ namespace BioSphereLab.Systems
             m_metadataArchetype = EntityManager.CreateArchetype(
                 ComponentType.ReadWrite<TimeStamp>(),
                 ComponentType.ReadWrite<CreatureId>(),
-                ComponentType.ReadWrite<LifeSpan>());
+                ComponentType.ReadWrite<LifeSpan>(),
+                ComponentType.ReadWrite<AliveCreatureEntityElement>());
         }
         
         protected override void OnUpdate()
@@ -52,7 +53,7 @@ namespace BioSphereLab.Systems
                 {
                     Value = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                 });
-                EntityManager.SetComponentData(metaDataEntity, new LifeSpan(){Value = 100});
+                EntityManager.SetComponentData(metaDataEntity, new LifeSpan(){Value = 2000});
                 EntityManager.SetComponentData(metaDataEntity, new CreatureId
                 {
                     Value = m_nextCreatureId++

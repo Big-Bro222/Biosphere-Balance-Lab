@@ -12,7 +12,7 @@ namespace BioSphereLab.Systems
     [DisableAutoCreation]
     public partial class CreatureInitSystem : InjectedSystemBase, ICreatureInitSystem
     {
-        private const double SpawnIntervalSeconds = 1.0d;
+        private const double SpawnIntervalSeconds = 0.01d;
 
         private EntityArchetype m_plantArchetype;
         private EntityQuery m_metaDataQuery;
@@ -51,7 +51,6 @@ namespace BioSphereLab.Systems
                 return;
             }
 
-
             m_nextSpawnTime = elapsedTime + SpawnIntervalSeconds;
 
             if (m_metaDataQuery.IsEmptyIgnoreFilter)
@@ -68,8 +67,15 @@ namespace BioSphereLab.Systems
 
                     EntityManager.SetComponentData(creatureEntity, new MetaDataRef { MetaDataEntity = metaDataEntity });
                     EntityManager.SetComponentData(creatureEntity, new TimeStamp { Value = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), });
+
+                    DynamicBuffer<AliveCreatureEntityElement> aliveCreatureEntities =
+                        EntityManager.HasBuffer<AliveCreatureEntityElement>(metaDataEntity)
+                            ? EntityManager.GetBuffer<AliveCreatureEntityElement>(metaDataEntity)
+                            : EntityManager.AddBuffer<AliveCreatureEntityElement>(metaDataEntity);
+
+                    aliveCreatureEntities.Add(new AliveCreatureEntityElement { Value = creatureEntity });
                 }
-            };
+            }
         }
     }
     
