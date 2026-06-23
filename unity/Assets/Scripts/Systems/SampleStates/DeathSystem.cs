@@ -1,5 +1,6 @@
 using System;
 using BioSphereLab.Components;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 
@@ -8,73 +9,72 @@ namespace BioSphereLab.Systems.SampleStates
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial class DeathSystem : SystemBase
     {
-        private EntityQuery m_creatureQuery;
+        private EntityQuery m_metaDataQuery;
 
         protected override void OnCreate()
         {
             base.OnCreate();
-            m_creatureQuery = EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<TimeStamp>(),
-                ComponentType.ReadOnly<MetaDataRef>());
+            m_metaDataQuery = EntityManager.CreateEntityQuery(
+                ComponentType.ReadWrite<AliveCreatureEntityElement>());
         }
 
         protected override void OnUpdate()
         {
             long currentTimeStamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-            if (m_creatureQuery.IsEmptyIgnoreFilter)
+            if (m_metaDataQuery.IsEmptyIgnoreFilter)
             {
                 return;
             }
 
-            using NativeArray<Entity> creatureEntities =
-                m_creatureQuery.ToEntityArray(Allocator.Temp);
-
-            for (int i = 0; i < creatureEntities.Length; i++)
+            EntityCommandBuffer entityCommandBuffer = new EntityCommandBuffer(Allocator.TempJob);
+            DestroyExpiredCreatureJob destroyExpiredCreatureJob = new DestroyExpiredCreatureJob
             {
-                Entity creatureEntity = creatureEntities[i];
-                TimeStamp timeStamp = EntityManager.GetComponentData<TimeStamp>(creatureEntity);
-                MetaDataRef metaDataRef = EntityManager.GetComponentData<MetaDataRef>(creatureEntity);
+                CurrentTimeStamp = currentTimeStamp,
+                CreatureRefs = GetComponentLookup<MetaDataRef>(true),
+                CommandBuffer = entityCommandBuffer.AsParallelWriter()
+            };
 
-                if (!EntityManager.Exists(metaDataRef.MetaDataEntity) ||
-                    !EntityManager.HasComponent<LifeSpan>(metaDataRef.MetaDataEntity))
-                {
-                    continue;
-                }
+            Dependency = destroyExpiredCreatureJob.ScheduleParallel(m_metaDataQuery, Dependency);
+            Dependency.Complete();
 
-                LifeSpan lifeSpan = EntityManager.GetComponentData<LifeSpan>(metaDataRef.MetaDataEntity);
-
-                long expireTimeStamp = timeStamp.Value + (long)lifeSpan.Value;
-                if (currentTimeStamp <= expireTimeStamp)
-                {
-                    continue;
-                }
-
-                RemoveCreatureEntityFromMetaDataBuffer(
-                    metaDataRef.MetaDataEntity,
-                    creatureEntity);
-
-                EntityManager.DestroyEntity(creatureEntity);
-            }
+            entityCommandBuffer.Playback(EntityManager);
+            entityCommandBuffer.Dispose();
         }
 
-        private void RemoveCreatureEntityFromMetaDataBuffer(Entity p_metaDataEntity, Entity p_creatureEntity)
+        [BurstCompile]
+        private partial struct DestroyExpiredCreatureJob : IJobEntity
         {
-            if (!EntityManager.Exists(p_metaDataEntity) ||
-                !EntityManager.HasBuffer<AliveCreatureEntityElement>(p_metaDataEntity))
-            {
-                return;
-            }
+            public long CurrentTimeStamp;
+            [ReadOnly] public ComponentLookup<MetaDataRef> CreatureRefs;
+            public EntityCommandBuffer.ParallelWriter CommandBuffer;
 
-            DynamicBuffer<AliveCreatureEntityElement> aliveCreatureEntities =
-                EntityManager.GetBuffer<AliveCreatureEntityElement>(p_metaDataEntity);
-
-            for (int i = aliveCreatureEntities.Length - 1; i >= 0; i--)
+            private void Execute(
+                [EntityIndexInQuery] int p_sortKey,
+                DynamicBuffer<AliveCreatureEntityElement> p_aliveCreatureEntities)
             {
-                if (aliveCreatureEntities[i].Value == p_creatureEntity)
+                int expiredCount = 0;
+
+                for (int i = 0; i < p_aliveCreatureEntities.Length; i++)
                 {
-                    aliveCreatureEntities.RemoveAt(i);
-                    return;
+                    AliveCreatureEntityElement creatureElement = p_aliveCreatureEntities[i];
+
+                    if (CurrentTimeStamp <= creatureElement.ExpireTimeStamp)
+                    {
+                        break;
+                    }
+
+                    if (CreatureRefs.HasComponent(creatureElement.Value))
+                    {
+                        CommandBuffer.DestroyEntity(p_sortKey, creatureElement.Value);
+                    }
+
+                    expiredCount++;
+                }
+
+                if (expiredCount > 0)
+                {
+                    p_aliveCreatureEntities.RemoveRange(0, expiredCount);
                 }
             }
         }

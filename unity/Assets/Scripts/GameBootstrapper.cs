@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using BioSphereLab.DependencyInjection.Examples;
 using BioSphereLab.DependencyInjection.Infrastructure;
 using BioSphereLab.Systems;
+using BioSphereLab.Systems.Presentation;
 using Unity.Entities;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace BioSphereLab
 {
     public static class GameBootstrapper
     {
-        private static readonly Dictionary<World, InjectionContainer> m_containersByWorld = new();
+        private static readonly Dictionary<World, IInjectionContainer> m_containersByWorld = new();
 
         // Unity can keep static fields alive between Play Mode sessions when Domain Reload is disabled.
         // Reset bootstrap state before scene loading so each Play Mode session starts cleanly.
@@ -19,7 +20,7 @@ namespace BioSphereLab
             m_containersByWorld.Clear();
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
         {
             World world = GetOrCreateDefaultWorld();
@@ -44,23 +45,30 @@ namespace BioSphereLab
                 return;
             }
 
-            InjectionContainer container = new InjectionContainer();
+            IInjectionContainer container = GetOrCreateContainer();
             RegisterDependencies(container);
             RegisterSystems(p_world, container);
 
             m_containersByWorld[p_world] = container;
         }
 
-        private static void RegisterDependencies(InjectionContainer p_container)
+        private static IInjectionContainer GetOrCreateContainer()
+        {
+            InjectionScope scope = Object.FindAnyObjectByType<InjectionScope>();
+            return scope != null ? scope.Container : new InjectionContainer();
+        }
+
+        private static void RegisterDependencies(IInjectionContainer p_container)
         {
             p_container.Register<ICreatureSpawnConfig, ConstCreatureSpawnConfig>();
             p_container.Register<IBiosphereSpawnPolicy, BalancedBiosphereSpawnPolicy>();
         }
         
-        private static void RegisterSystems(World p_world, InjectionContainer p_container)
+        private static void RegisterSystems(World p_world, IInjectionContainer p_container)
         {
             p_container.RegisterSystem<ICreatureMetadataSystem, CreatureMetadataSystem, InitializationSystemGroup>(p_world);
             p_container.RegisterSystem<ICreatureInitSystem, CreatureInitSystem, InitializationSystemGroup>(p_world);
+            p_container.RegisterSystem<ICreaturePresentationSystem, CreaturePresentationSystem, PresentationSystemGroup>(p_world);
         }
     }
 }

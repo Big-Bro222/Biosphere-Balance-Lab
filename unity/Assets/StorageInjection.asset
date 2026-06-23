@@ -15,7 +15,9 @@ MonoBehaviour:
   m_prefabs:
   - m_key: TestPrefab
     m_prefab: {fileID: 8738872792185393711, guid: 73f51d1b9cd3ce148a32cf155a94788c, type: 3}
-  m_materials: []
+  m_materials:
+  - m_key: Default
+    m_material: {fileID: 2100000, guid: 601a90659934cb24dadb9591411ba6ef, type: 2}
   m_meshes:
   - m_key: Cube
     m_mesh: {fileID: -5495902117074765545, guid: f7ddf669c5060a546ae43e5aad4c20ef, type: 3}
