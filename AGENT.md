@@ -58,6 +58,25 @@ Before making architectural, dependency, or framework-level decisions, read:
 
 If these files do not exist yet, propose the minimal file structure before making large changes.
 
+## Jira context
+
+Primary Atlassian site: `https://biospherelab.atlassian.net`
+
+Cloud ID: `a34e4276-8e89-4e1b-b937-cb91a977c421`
+
+Main Jira project: `BIO`
+
+Current foundation epic: `BIO-14` - Phase 1 - Foundation
+
+When working with Jira for this repository, use the Atlassian Rovo Jira tools with the cloud ID above. Prefer direct issue lookup or JQL over broad Rovo search when the user provides an issue key or epic key.
+
+Useful JQL:
+
+```jql
+key = BIO-14
+parent = BIO-14 ORDER BY key ASC
+```
+
 ## Technology boundaries
 
 Do not replace the core stack unless explicitly asked.
