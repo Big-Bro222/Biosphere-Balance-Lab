@@ -18,6 +18,8 @@ This project is designed to demonstrate the following capabilities:
 - React dashboard UI for simulation control, metrics, and inspection
 - CI/CD pipeline using GitHub Actions and GameCI
 
+The stack and architecture boundaries for these areas are documented in `docs/tech-stack.md`.
+
 ---
 
 # Milestone 1 — Unity ECS Simulation Core

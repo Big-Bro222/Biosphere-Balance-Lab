@@ -1,5 +1,7 @@
 # BioSphereLab Architecture
 
+For the project-wide stack and ownership boundaries between Unity, React, shared protocol, CI, and future backend work, see `docs/tech-stack.md`.
+
 ## Unity dependency injection
 
 The Unity project uses a small in-repository dependency injection layer under

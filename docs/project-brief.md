@@ -6,6 +6,8 @@ Biosphere Balance Lab is a portfolio-oriented closed ecosystem simulation lab. T
 
 The first phase is not about building the final product. It is about creating a runnable MVP foundation that proves the technical direction is practical and gives later work a clear home.
 
+Related technical boundaries are documented in `docs/tech-stack.md`.
+
 ## Portfolio Positioning
 
 The project should stay balanced across Unity, React, and backend engineering. It should demonstrate:
