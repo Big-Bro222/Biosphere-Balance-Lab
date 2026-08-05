@@ -210,6 +210,31 @@ Do not claim tests were run unless they were actually run.
 
 If a command cannot be run in the current environment, explain what was skipped and why.
 
+## Commit message guidelines
+
+Use a bracketed area prefix for commit subjects when it adds clarity, matching the existing repository style.
+It is okay to commit without a prefix when the change is general repository maintenance, documentation-only, or does not fit one area cleanly.
+
+Preferred prefixes:
+
+* `[Unity]` for Unity project, ECS simulation, C# scripts, Unity assets, scenes, packages, or WebGPU build work.
+* `[CI]` for GitHub Actions, GameCI, build automation, test automation, deployment, or repository automation.
+* `[Web]` for React, TypeScript, dashboard UI, charts, browser integration, or frontend tooling.
+* `[API]` for .NET backend, API endpoints, DTOs, persistence, validation, or backend tests.
+
+Keep the subject short and imperative when practical:
+
+```text
+[Unity] Add biosphere resource components
+[CI] Add Unity edit mode test workflow
+[Web] Scaffold simulation dashboard shell
+[API] Add preset DTO validation
+```
+
+For changes spanning multiple areas, choose the prefix for the main user-facing or architectural impact. Mention secondary areas in the commit body if needed.
+
+Ask for explicit user permission before pushing commits from this project.
+
 ## CI/CD expectations
 
 Prefer GitHub Actions for CI/CD.
