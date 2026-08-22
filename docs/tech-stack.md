@@ -8,11 +8,12 @@ This document defines the intended technical stack for Biosphere Balance Lab and
 
 | Area | Current or intended choice | Role |
 | --- | --- | --- |
-| Unity | Unity `6000.4.11f1` | Owns the real-time biosphere simulation and visual simulation viewport |
-| Unity ECS | `com.unity.feature.ecs` `1.0.0`, Entities `6.4.0` from the lock file | Structures simulation data and systems |
-| Rendering | Universal Render Pipeline `17.4.0` | Provides the current render pipeline for the Unity scene |
-| Input | Input System `1.19.0` | Handles future simulation viewport input where needed |
-| Testing | Unity Test Framework `1.6.0` | Supports future EditMode, PlayMode, and simulation rule tests |
+| Unity | Unity `6000.5.9f1` | Owns the real-time biosphere simulation and visual simulation viewport |
+| Unity ECS | `com.unity.feature.ecs` `1.0.0`, Entities `6.5.0` from the lock file | Structures simulation data and systems |
+| Rendering | Universal Render Pipeline `17.5.0` | Provides the current render pipeline for the Unity scene |
+| Input | Input System `1.20.0` | Handles future simulation viewport input where needed |
+| Testing | Unity Test Framework `1.7.0` | Supports future EditMode, PlayMode, and simulation rule tests |
+| Unity UI | UGUI `2.5.0` | Supports built-in Unity UI surfaces where needed |
 | Frontend | React, Vite, TypeScript | Owns the dashboard shell, controls, metrics, charts, and product UX |
 | Shared protocol | JSON-message contracts under `shared/protocol` | Defines commands, events, config, status, and metrics shared by React and Unity |
 | Backend | Future ASP.NET Core Web API | Owns scenario presets, run history, validation, and API design when needed |
